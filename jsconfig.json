@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "checkJs": false,
+    "moduleResolution": "node",
+    "target": "ES2021",
+    "allowJs": true
+  },
+  "include": ["**/*.js"]
+}

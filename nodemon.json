@@ -1,0 +1,19 @@
+{
+  "watch": [
+    "src/",
+    "moleculer.config.js",
+    "Dockerfile",
+    "docker-compose.yml",
+    "docker-compose.env"
+  ],
+  "ignore": [
+    "node_modules/",
+    "test/",
+    "public/",
+    "*.log",
+    "coverage/"
+  ],
+  "ext": "js,yml,yaml,env",
+  "exec": "npm run dc:up",
+  "delay": "1000"
+}

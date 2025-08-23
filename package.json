@@ -1,0 +1,59 @@
+{
+  "name": "epam",
+  "version": "1.0.0",
+  "description": "My Moleculer-based microservices project",
+  "scripts": {
+    "dev": "moleculer-runner --repl --hot --envfile .env",
+    "start": "moleculer-runner",
+    "cli": "moleculer connect NATS",
+    "ci": "jest --watch",
+    "test": "jest --coverage",
+    "lint": "eslint src",
+    "dc:up": "docker-compose up --build -d",
+    "dc:logs": "docker-compose logs -f",
+    "dc:down": "docker-compose down",
+    "dc:watch": "nodemon"
+  },
+  "keywords": [
+    "microservices",
+    "moleculer"
+  ],
+  "author": "",
+  "devDependencies": {
+    "eslint": "8.57.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-n": "17.19.0",
+    "eslint-plugin-prettier": "5.4.1",
+    "jest": "27.5.1",
+    "jest-cli": "27.5.1",
+    "moleculer-repl": "0.7.3",
+    "nodemon": "3.1.10",
+    "prettier": "3.5.3"
+  },
+  "dependencies": {
+    "axios": "1.11.0",
+    "bcrypt": "^6.0.0",
+    "dotenv": "17.2.1",
+    "ioredis": "5.0.0",
+    "joi": "18.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "moleculer": "0.14.26",
+    "moleculer-db": "0.8.20",
+    "moleculer-db-adapter-mongo": "0.4.15",
+    "moleculer-web": "0.10.4",
+    "mongodb": "6.18.0",
+    "nats": "2.7.1",
+    "redlock": "4.2.0"
+  },
+  "engines": {
+    "node": ">= 16.x.x"
+  },
+  "jest": {
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "rootDir": "./src",
+    "roots": [
+      "../test"
+    ]
+  }
+}
