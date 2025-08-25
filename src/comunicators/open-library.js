@@ -43,6 +43,7 @@ class OpenLibrary {
    *   publicationYear: number,
    *   key: string,
    *   cover?: string,
+   *   isInMyLibrary?: boolean,
    * }[]>}
    */
   async search({ q, page = 1 }) {
@@ -52,11 +53,13 @@ class OpenLibrary {
     });
 
     return response.data.docs.map((book) => ({
+      key: book.key.split('/').pop(),
       title: book.title,
       author: book.author_name,
       publicationYear: book.first_publish_year,
-      key: book.key.split('/').pop(),
-      cover: book.cover_i,
+      cover:
+        book.cover_i &&
+        `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg`,
     }));
   }
 }

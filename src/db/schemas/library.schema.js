@@ -3,6 +3,9 @@
 const { BaseDoc } = require('./base.schema.js');
 
 /**
- * @typedef {BaseDoc & {}} LibraryDoc
+ * @typedef {BaseDoc & {
+ *  userId: string;
+ *  books: string[];
+ * }} LibraryDoc
  */
 module.exports = {};

@@ -40,7 +40,7 @@ module.exports = {
   cacher: {
     type: 'Redis',
     options: {
-      ttl: 300,
+      ttl: 60 * 60, // 1 hour
       redis: {
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
