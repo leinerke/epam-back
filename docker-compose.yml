@@ -3,7 +3,7 @@ services:
   # api:
   #   build:
   #     context: .
-  #   image: epam
+  #   image: epam-backend
   #   env_file: docker-compose.env
   #   environment:
   #     SERVICES: api
@@ -21,7 +21,7 @@ services:
   # greeter:
   #   build:
   #     context: .
-  #   image: epam
+  #   image: epam-backend
   #   env_file: docker-compose.env
   #   environment:
   #     SERVICES: greeter
@@ -34,7 +34,7 @@ services:
   # products:
   #   build:
   #     context: .
-  #   image: epam
+  #   image: epam-backend
   #   env_file: docker-compose.env
   #   environment:
   #     SERVICES: products
@@ -48,7 +48,7 @@ services:
   # books:
   #   build:
   #     context: .
-  #   image: epam
+  #   image: epam-backend
   #   env_file: docker-compose.env
   #   environment:
   #     SERVICES: books
