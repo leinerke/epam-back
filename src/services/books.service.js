@@ -266,19 +266,23 @@ module.exports = {
           sort.ratingAvg = Number(ctx.params.rating);
         }
 
-        const books = await repos.books.find(query, {
-          projection: {
-            title: 1,
-            author: 1,
-            publicationYear: 1,
-            cover: 1,
-            reviews: {
-              rating: 1,
+        const books = await repos.books.find(
+          query,
+          {
+            projection: {
+              title: 1,
+              author: 1,
+              publicationYear: 1,
+              cover: 1,
+              reviews: {
+                rating: 1,
+              },
             },
+            ...paginate(ctx.params.page),
+            sort,
           },
-          ...paginate(ctx.params.page),
-          sort,
-        });
+          { collation: { locale: 'en', strength: 2 } },
+        );
 
         return books;
       },

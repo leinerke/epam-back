@@ -62,6 +62,7 @@ services:
   mongo:
     image: mongo:7.0
     volumes:
+      - ./mongo-init:/docker-entrypoint-initdb.d
       - data:/data/db
     ports:
       - 27017:27017

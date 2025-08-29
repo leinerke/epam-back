@@ -2,6 +2,8 @@
 
 const ApiGateway = require('moleculer-web');
 const jwt = require('jsonwebtoken');
+const { MongoClient, ObjectId } = require('mongodb');
+const { repositories, Repos } = require('../db');
 
 /**
  * @typedef {import('moleculer').Context} Context Moleculer's Context
@@ -13,6 +15,23 @@ const jwt = require('jsonwebtoken');
 /** @type {import('moleculer').ServiceSchema} */
 module.exports = {
   name: 'api',
+
+  async started() {
+    if (!process.env.MONGO_URI) {
+      throw new Errors.MoleculerError('MONGO_URI is not set', 500);
+    }
+
+    this.mongoClient = await MongoClient.connect(process.env.MONGO_URI);
+    this.db = this.mongoClient.db();
+    this.repositories = repositories(this.db);
+  },
+
+  async stopped() {
+    if (this.mongoClient) {
+      await this.mongoClient.close();
+    }
+  },
+
   mixins: [ApiGateway],
   /** @type {ApiSettingsSchema} More info about settings: https://moleculer.services/docs/0.14/moleculer-web.html */
   settings: {
@@ -129,12 +148,25 @@ module.exports = {
 
       try {
         payload = jwt.verify(accessToken, process.env.JWT_SECRET);
-        return { userId: payload.userId };
       } catch (error) {
         throw new ApiGateway.Errors.UnAuthorizedError(
           ApiGateway.Errors.ERR_INVALID_TOKEN,
         );
       }
+
+      /** @type {Repos} */
+      const repos = this.repositories;
+      const user = await repos.users.findOne({
+        _id: new ObjectId(payload.userId),
+      });
+
+      if (!user) {
+        throw new ApiGateway.Errors.UnAuthorizedError(
+          ApiGateway.Errors.ERR_INVALID_TOKEN,
+        );
+      }
+
+      return { userId: payload.userId };
     },
 
     /**

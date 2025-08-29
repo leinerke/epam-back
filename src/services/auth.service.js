@@ -54,9 +54,10 @@ module.exports = {
 
         /** @type {Repos} */
         const repos = this.repositories;
-        const user = await repos.users.findOne({
-          email: validated.value.email,
-        });
+        const user = await repos.users.findOne(
+          { email: validated.value.email },
+          { collation: { locale: 'en', strength: 2 } },
+        );
 
         if (user) {
           throw new Errors.MoleculerError('User already exists', 400);
@@ -85,7 +86,10 @@ module.exports = {
         /** @type {Repos} */
         const repos = this.repositories;
 
-        const user = await repos.users.findOne({ email: ctx.params.email });
+        const user = await repos.users.findOne(
+          { email: ctx.params.email },
+          { collation: { locale: 'en', strength: 2 } },
+        );
 
         if (
           !user ||
