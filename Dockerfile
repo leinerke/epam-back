@@ -11,4 +11,4 @@ RUN npm install --production
 
 COPY . .
 
-CMD ["npm", "start:dc"]
+CMD ["node", "--run", "start:dc"]
