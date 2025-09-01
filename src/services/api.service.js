@@ -139,7 +139,7 @@ module.exports = {
 
       const accessToken = req.headers['authorization']?.split(' ')[1];
       if (!accessToken) {
-        if (req.$action.name === 'books.search') {
+        if (['books.search', 'books.getBook'].includes(req.$action.name)) {
           return null;
         }
 

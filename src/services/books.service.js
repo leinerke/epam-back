@@ -476,6 +476,10 @@ module.exports = {
   methods: {
     /** @param {string | undefined} userId @param {string} query */
     async saveSearchHistory(userId, query) {
+      if (!userId) {
+        return;
+      }
+
       /** @type {Repos} */
       const repos = this.repositories;
 
@@ -504,7 +508,20 @@ module.exports = {
                       initialValue: [],
                       in: {
                         $cond: [
-                          { $in: ['$$this', '$$value'] }, // if already in accumulator, skip
+                          {
+                            $anyElementTrue: {
+                              $map: {
+                                input: '$$value',
+                                as: 'existing',
+                                in: {
+                                  $eq: [
+                                    { $toLower: '$$existing' },
+                                    { $toLower: '$$this' },
+                                  ],
+                                },
+                              },
+                            },
+                          }, // if already in accumulator (case-insensitive), skip
                           '$$value',
                           { $concatArrays: ['$$value', ['$$this']] }, // else append
                         ],
