@@ -222,7 +222,7 @@ module.exports = {
         },
         page: { type: 'number', min: 1, convert: true },
       },
-      /** @param {import('moleculer').Context<{}, Meta>} ctx */
+      /** @param {import('moleculer').Context<{ title?: string, author?: string, hasReviews?: boolean, rating?: string, page?: number }, Meta>} ctx */
       async handler(ctx) {
         /** @type {Repos} */
         const repos = this.repositories;
@@ -264,10 +264,10 @@ module.exports = {
           ];
         }
 
-        if (ctx.params.reviews) {
+        if (ctx.params.hasReviews !== undefined) {
           query.$and = [
             ...(query.$and || []),
-            { hasReviews: ctx.params.reviews },
+            { hasReviews: ctx.params.hasReviews },
           ];
         }
 
@@ -285,6 +285,8 @@ module.exports = {
               publicationYear: 1,
               cover: 1,
               ratingAvg: 1,
+              ratingCount: 1,
+              ratingSum: 1,
             },
             ...paginate(ctx.params.page),
             sort,
@@ -323,6 +325,7 @@ module.exports = {
               author: 1,
               publicationYear: 1,
               cover: 1,
+              ratingAvg: 1,
               reviews: 1,
             },
           },
@@ -347,8 +350,11 @@ module.exports = {
 
         book.reviews.forEach((review) => {
           const user = users.find(
-            (user) => user._id.toString() === review.userId,
+            (user) => user._id.toString() === review.userId.toString(),
           );
+          if (!user) {
+            return;
+          }
           delete review.userId;
           review.user = user.email;
         });
@@ -541,7 +547,7 @@ module.exports = {
         reviews: [],
         ratingCount: 0,
         ratingSum: 0,
-        ratingAvg: null,
+        ratingAvg: 0,
         hasReviews: false,
         titleTokens: this.tokenize(validated.value.title),
         authorTokens: this.tokenizeMany(validated.value.author || []),
@@ -587,7 +593,7 @@ module.exports = {
         try {
           response = await axios.get(url, {
             responseType: 'arraybuffer',
-            timeout: 10000, // 10 second timeout
+            timeout: 1000 * 60 * 5, // 5 minute timeout
           });
         } catch (error) {
           return undefined;

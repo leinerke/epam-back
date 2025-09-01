@@ -16,7 +16,7 @@ const Joi = require('joi');
  *   }[];
  *   ratingCount: number;
  *   ratingSum: number;
- *   ratingAvg?: number;
+ *   ratingAvg: number;
  *   hasReviews: boolean;
  *   titleTokens: string[];
  *   authorTokens: string[];
