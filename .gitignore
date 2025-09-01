@@ -64,3 +64,5 @@ typings/
 .idea
 
 *.env
+
+.DS_Store
