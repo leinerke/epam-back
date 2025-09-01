@@ -1,112 +1,98 @@
 services:
+  api:
+    build:
+      context: .
+    image: epam-backend
+    env_file: docker-compose.env
+    environment:
+      SERVICES: api
+      PORT: 4001
+    depends_on:
+      - nats
+      - redis
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.api-gw.rule=PathPrefix(`/`)'
+      - 'traefik.http.services.api-gw.loadbalancer.server.port=4001'
+    networks:
+      - internal
 
-  # api:
-  #   build:
-  #     context: .
-  #   image: epam-backend
-  #   env_file: docker-compose.env
-  #   environment:
-  #     SERVICES: api
-  #     PORT: 3000
-  #   depends_on:
-  #     - nats
-  #     - redis
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.api-gw.rule=PathPrefix(`/`)"
-  #     - "traefik.http.services.api-gw.loadbalancer.server.port=3000"
-  #   networks:
-  #     - internal
+  books:
+    build:
+      context: .
+    image: epam-backend
+    env_file: docker-compose.env
+    environment:
+      SERVICES: books
+    depends_on:
+      - mongo
+      - nats
+      - redis
+    networks:
+      - internal
 
-  # greeter:
-  #   build:
-  #     context: .
-  #   image: epam-backend
-  #   env_file: docker-compose.env
-  #   environment:
-  #     SERVICES: greeter
-  #   depends_on:
-  #     - nats
-  #     - redis
-  #   networks:
-  #     - internal
-
-  # products:
-  #   build:
-  #     context: .
-  #   image: epam-backend
-  #   env_file: docker-compose.env
-  #   environment:
-  #     SERVICES: products
-  #   depends_on:
-  #     - mongo
-  #     - nats
-  #     - redis
-  #   networks:
-  #     - internal
-
-  # books:
-  #   build:
-  #     context: .
-  #   image: epam-backend
-  #   env_file: docker-compose.env
-  #   environment:
-  #     SERVICES: books
-  #   depends_on:
-  #     - mongo
-  #     - nats
-  #     - redis
-  #   networks:
-  #     - internal
+  auth:
+    build:
+      context: .
+    image: epam-backend
+    env_file: docker-compose.env
+    environment:
+      SERVICES: auth
+    depends_on:
+      - mongo
+      - nats
+      - redis
+    networks:
+      - internal
 
   mongo:
     image: mongo:7.0
     volumes:
       - ./mongo-init:/docker-entrypoint-initdb.d
       - data:/data/db
-    ports:
-      - 27017:27017
+    # ports:
+    #   - 27017:27017
     networks:
       - internal
 
   nats:
     image: nats:2
-    ports:
-      - 4222:4222
+    # ports:
+    #   - 4222:4222
     networks:
       - internal
 
   redis:
     image: redis:alpine
-    ports:
-      - 6379:6379
+    # ports:
+    #   - 6379:6379
     networks:
       - internal
 
-  redis-commander:
-    image: rediscommander/redis-commander:latest
-    environment:
-      - REDIS_HOSTS=local:redis:6379
-    ports:
-      - "8081:8081"
-    networks:
-      - internal
-    depends_on:
-      - redis
-
-  # traefik:
-  #   image: traefik:v2.4
-  #   command:
-  #     - "--api.insecure=true" # Don't do that in production!
-  #     - "--providers.docker=true"
-  #     - "--providers.docker.exposedbydefault=false"
+  # redis-commander:
+  #   image: rediscommander/redis-commander:latest
+  #   environment:
+  #     - REDIS_HOSTS=local:redis:6379
   #   ports:
-  #     - 3000:80
-  #     - 3001:8080
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - '8081:8081'
   #   networks:
   #     - internal
+  #   depends_on:
+  #     - redis
+
+  traefik:
+    image: traefik:v2.4
+    command:
+      - "--api.insecure=true" # Don't do that in production!
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+    ports:
+      - 4001:80
+      # - 3001:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - internal
 
 networks:
   internal:

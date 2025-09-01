@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:22-alpine
 
 ENV NODE_ENV=production
 
@@ -11,4 +11,4 @@ RUN npm install --production
 
 COPY . .
 
-CMD ["npm", "start"]
+CMD ["npm", "start:dc"]

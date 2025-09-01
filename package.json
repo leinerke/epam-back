@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "moleculer-runner --repl --hot --envfile .env",
     "start": "moleculer-runner --envfile .env",
+    "start:dc": "moleculer-runner",
     "cli": "moleculer connect NATS",
     "ci": "jest --watch",
     "test": "jest --coverage",

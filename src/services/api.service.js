@@ -38,10 +38,12 @@ module.exports = {
     // Exposed port
     port: Number(process.env.PORT) || 3000,
     cors: {
-      origin: '*',
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      origin: ['https://epam-library.leinerke.dev', 'http://localhost:3001'],
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+      credentials: true,
     },
+
     // Exposed IP
     ip: '0.0.0.0',
     // Global Express middlewares. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Middlewares
