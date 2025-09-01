@@ -53,7 +53,11 @@ module.exports = {
           this.saveSearchHistory(ctx.meta.user?.userId, ctx.params.q),
         ]);
 
-        return response;
+        return {
+          status: true,
+          message: 'Search completed successfully',
+          response,
+        };
       },
     },
 
@@ -122,8 +126,6 @@ module.exports = {
             .map((book) => this.saveBook(book)),
         );
 
-        console.log(savedBooks.length);
-
         return [...existingBooks, ...savedBooks];
       },
     },
@@ -149,7 +151,11 @@ module.exports = {
           },
         );
 
-        return searchHistory?.queries || [];
+        return {
+          status: true,
+          message: 'Last search completed successfully',
+          response: searchHistory?.queries || [],
+        };
       },
     },
 
@@ -168,9 +174,7 @@ module.exports = {
             _id: new ObjectId(ctx.params.id),
           },
           {
-            projection: {
-              _id: 1,
-            },
+            projection: {},
           },
         );
 
@@ -185,6 +189,12 @@ module.exports = {
         );
 
         this.broker.cacher.clean(`books.myLibrary:${ctx.meta.user.userId}*`);
+
+        return {
+          status: true,
+          message: 'Book added to my library successfully',
+          response: null,
+        };
       },
     },
 
@@ -274,9 +284,7 @@ module.exports = {
               author: 1,
               publicationYear: 1,
               cover: 1,
-              reviews: {
-                rating: 1,
-              },
+              ratingAvg: 1,
             },
             ...paginate(ctx.params.page),
             sort,
@@ -284,7 +292,11 @@ module.exports = {
           { collation: { locale: 'en', strength: 2 } },
         );
 
-        return books;
+        return {
+          status: true,
+          message: 'My library retrieved successfully',
+          response: books,
+        };
       },
     },
 
@@ -341,7 +353,11 @@ module.exports = {
           review.user = user.email;
         });
 
-        return book;
+        return {
+          status: true,
+          message: 'Book retrieved successfully',
+          response: book,
+        };
       },
     },
 
@@ -361,6 +377,12 @@ module.exports = {
         );
 
         this.broker.cacher.clean(`books.myLibrary:${ctx.meta.user.userId}*`);
+
+        return {
+          status: true,
+          message: 'Book removed from my library successfully',
+          response: null,
+        };
       },
     },
 
@@ -434,6 +456,13 @@ module.exports = {
         ]);
 
         this.broker.cacher.del(`books.getBook:${ctx.params.id}`);
+        this.broker.cacher.clean(`books.myLibrary:*`);
+
+        return {
+          status: true,
+          message: 'Review added successfully',
+          response: null,
+        };
       },
     },
   },

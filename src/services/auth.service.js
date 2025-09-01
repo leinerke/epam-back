@@ -56,7 +56,10 @@ module.exports = {
         const repos = this.repositories;
         const user = await repos.users.findOne(
           { email: validated.value.email },
-          { collation: { locale: 'en', strength: 2 } },
+          {
+            projection: {},
+            collation: { locale: 'en', strength: 2 },
+          },
         );
 
         if (user) {
@@ -72,6 +75,12 @@ module.exports = {
           ...validated.value,
           password: hashedPassword,
         });
+
+        return {
+          status: true,
+          message: 'User signed up successfully',
+          response: null,
+        };
       },
     },
 
@@ -79,7 +88,7 @@ module.exports = {
       rest: { method: 'POST', path: '/sign-in' },
       params: {
         email: { type: 'email' },
-        password: { type: 'string', min: 6 },
+        password: { type: 'string', min: 6, max: 72 },
       },
       /** @param {import('moleculer').Context<{ email: string, password: string }>} ctx */
       async handler(ctx) {
@@ -88,7 +97,10 @@ module.exports = {
 
         const user = await repos.users.findOne(
           { email: ctx.params.email },
-          { collation: { locale: 'en', strength: 2 } },
+          {
+            projection: { email: 1, password: 1 },
+            collation: { locale: 'en', strength: 2 },
+          },
         );
 
         if (
@@ -101,6 +113,10 @@ module.exports = {
         const tokens = {
           accessToken: this.generateToken(user),
           refreshToken: this.generateToken(user, true),
+          me: {
+            _id: user._id,
+            email: user.email,
+          },
         };
 
         await repos.users.updateOne(
@@ -108,7 +124,11 @@ module.exports = {
           { $set: { refreshToken: tokens.refreshToken } },
         );
 
-        return tokens;
+        return {
+          status: true,
+          message: 'User signed in successfully',
+          response: tokens,
+        };
       },
     },
 
@@ -134,16 +154,24 @@ module.exports = {
           throw new Errors.MoleculerError('Invalid refresh token', 401);
         }
 
-        const user = await repos.users.findOne({
-          _id: new ObjectId(payload.userId),
-        });
+        const user = await repos.users.findOne(
+          {
+            _id: new ObjectId(payload.userId),
+          },
+          { projection: { refreshToken: 1 } },
+        );
 
         if (!user || user.refreshToken !== ctx.params.refreshToken) {
           throw new Errors.MoleculerError('Invalid refresh token', 401);
         }
 
         return {
-          accessToken: this.generateToken(user),
+          status: true,
+          message: 'Token refreshed successfully',
+          response: {
+            accessToken: this.generateToken(user),
+            me: user,
+          },
         };
       },
     },
@@ -169,9 +197,12 @@ module.exports = {
           throw new Errors.MoleculerError('Invalid refresh token', 401);
         }
 
-        const user = await repos.users.findOne({
-          _id: new ObjectId(payload.userId),
-        });
+        const user = await repos.users.findOne(
+          {
+            _id: new ObjectId(payload.userId),
+          },
+          { projection: { refreshToken: 1 } },
+        );
 
         if (!user || user.refreshToken !== ctx.params.refreshToken) {
           throw new Errors.MoleculerError('Invalid refresh token', 401);
@@ -182,7 +213,11 @@ module.exports = {
           { $set: { refreshToken: '' } },
         );
 
-        return;
+        return {
+          status: true,
+          message: 'User signed out successfully',
+          response: null,
+        };
       },
     },
   },

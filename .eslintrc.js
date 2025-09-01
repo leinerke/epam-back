@@ -4,7 +4,6 @@ module.exports = {
         "node": true,
         "commonjs": true,
         "es6": true,
-        "jquery": false,
         "jest": true,
         "jasmine": true
     },

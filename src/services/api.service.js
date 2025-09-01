@@ -37,6 +37,11 @@ module.exports = {
   settings: {
     // Exposed port
     port: Number(process.env.PORT) || 3000,
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    },
     // Exposed IP
     ip: '0.0.0.0',
     // Global Express middlewares. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Middlewares

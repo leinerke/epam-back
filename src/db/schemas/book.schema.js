@@ -16,11 +16,11 @@ const Joi = require('joi');
  *   }[];
  *   ratingCount: number;
  *   ratingSum: number;
- *   ratingAvg: number|null;
+ *   ratingAvg?: number;
  *   hasReviews: boolean;
  *   titleTokens: string[];
  *   authorTokens: string[];
- *   cover: string|null;
+ *   cover?: string;
  * }} BookDoc
  */
 
