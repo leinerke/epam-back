@@ -135,7 +135,8 @@ module.exports = {
      * @returns {Promise}
      */
     async authenticate(ctx, route, req) {
-      if (req.$action.service.name !== 'books') {
+      console.log(req.$action);
+      if (req.$action.name.split('.')[0] !== 'books') {
         return null;
       }
 
